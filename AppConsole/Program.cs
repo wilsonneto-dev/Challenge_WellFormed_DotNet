@@ -25,22 +25,26 @@ namespace AppConsole
             Stack<Char> stackChars = new Stack<Char>();
             Char[] arrChars = inputExpression.ToArray();
             
-            String openChars = "[{(", closeChars = "]})";
+            Dictionary<Char, Char> charPairs = new Dictionary<Char, Char>() {
+                {'[', ']'},
+                {'{', '}'},
+                {'(', ')'}
+            };
 
             foreach(Char character in arrChars)
             {
-                int openCharsIndex = openChars.LastIndexOf(character);
-                if(openCharsIndex > -1) 
+                
+                if(charPairs.Keys.Contains(character)) 
                 { // opening scope char
                     stackChars.Push(character);
-                } else {
-                    int closingCharIndex = closeChars.LastIndexOf(character);
-                    if(closingCharIndex < 0)
+                } else { 
+                    // closing scope char
+                    if(!charPairs.Values.Contains(character))
                         return false;
-                    
-                    Char openingCharCorrespondingToThisChar = openChars.ToArray()[closingCharIndex];
-                    Char lastOpenedScopeChar = stackChars.Pop();
-                    if(openingCharCorrespondingToThisChar == lastOpenedScopeChar)
+
+                    Char lastOpened = stackChars.Pop();
+
+                    if(character == charPairs.GetValueOrDefault(lastOpened))
                         continue;
                     else
                         return false;
